@@ -9,12 +9,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e cleanverify - Dsurefire.useFile = false - Dmaven.test.failure.ignore '
+                sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore=true'
             }
         }
+
         stage('Analysis') {
             steps {
-                sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e checkstyle: checkstyle pmd: pmd pmd: cpd findbugs: findbugs '
+                sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs'
             }
         }
     }
@@ -22,11 +23,7 @@ pipeline {
         always {
             junit testResults: '**/target/surefire-reports/TEST-*.xml'
             recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-            recordIssues enabledForFailure: true, tool: checkStyle()
-            recordIssues enabledForFailure: true, tool: spotBugs(pattern:
-                '**/target/findbugsXml.xml')
-            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+            recordIssues enabledForFailure: true, tools: [checkStyle(), spotBugs(pattern: '**/target/findbugsXml.xml'), cpd(pattern: '**/target/cpd.xml'), pmdParser(pattern: '**/target/pmd.xml')]
         }
     }
 }
