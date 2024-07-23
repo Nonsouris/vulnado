@@ -9,14 +9,18 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore=true'
+				withMaven {
+					sh 'mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore=true'
+					}
             }
         }
 
         stage('Analysis') {
             steps {
-                sh 'mvn --batch-mode -V -U -e -X checkstyle:checkstyle pmd:pmd pmd:cpd com.github.spotbugs:spotbugs-maven-plugin:3.1.7:spotbugs'
-            }
+				withMaven {
+					sh 'mvn --batch-mode -V -U -e -X checkstyle:checkstyle pmd:pmd pmd:cpd com.github.spotbugs:spotbugs-maven-plugin:3.1.7:spotbugs'
+				}
+			}
         }
     }
     post {
