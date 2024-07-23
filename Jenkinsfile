@@ -9,13 +9,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '/var/jenkins_home/apache-maven-3.8.8/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore=true'
+                sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore=true'
             }
         }
 
         stage('Analysis') {
             steps {
-                sh '/var/jenkins_home/apache-maven-3.8.8/bin/mvn --batch-mode -V -U -e -X checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs'
+                sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn --batch-mode -V -U -e -X checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs'
             }
         }
     }
